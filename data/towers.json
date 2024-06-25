@@ -1,0 +1,72 @@
+{
+    "single": {
+        "name": "Biscuit Dispenser",
+        "id": 0,
+        "info": "Ol' reliable, feeds cats till they tire from eating",
+        "isSelected": false,
+        "isPurchased": false,
+        "towerCost": 200,
+        "attackTimer": 0,
+        "attackSpeed": 500,
+        "canShoot": false,
+        "bulletType": 0,
+        "towerRange": 100,
+        "towerBuffs": []
+    },
+    "double":{
+        "name": "Double Feeder",
+        "id": 1,
+        "info": "With two barrels, this tower can feed two cats at once",
+        "isSelected": false,
+        "isPurchased": false,
+        "towerCost": 550,
+        "attackTimer": 0,
+        "attackSpeed": 600,
+        "canShoot": false,
+        "bulletType": 0,
+        "towerRange": 150,
+        "towerBuffs": ["doubleshot"]
+    },
+    "spray": {
+        "name": "Spray Bottle",
+        "id": 2,
+        "info": "A cat's biggest fear, this tower has a chance of scaring cats back the way they came",
+        "isSelected": false,
+        "isPurchased": false,
+        "towerCost": 800,
+        "attackTimer": 0,
+        "attackSpeed": 700,
+        "canShoot": false,
+        "bulletType": 1,
+        "towerRange": 90,
+        "towerBuffs": []
+    },
+    "sniper": {
+        "name": "Sniper Feeder",
+        "id": 3,
+        "info": "High range, high damage, low firerate",
+        "isSelected": false,
+        "isPurchased": false,
+        "towerCost": 1000,
+        "attackTimer": 0,
+        "attackSpeed": 1200,
+        "canShoot": false,
+        "bulletType": 2,
+        "towerRange": 500,
+        "towerBuffs": []
+    },
+    "super": {
+        "name": "Super Tower",
+        "id": 4,
+        "info": "Crazy fast firerate, the greatest yarn scientists worked together to manufacture this masterpiece",
+        "isSelected": false,
+        "isPurchased": false,
+        "towerCost": 5000,
+        "attackTimer": 0,
+        "attackSpeed": 100,
+        "canShoot": false,
+        "bulletType": 0,
+        "towerRange": 200,
+        "towerBuffs": []
+    }
+}

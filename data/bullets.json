@@ -1,0 +1,23 @@
+{
+    "main":{
+        "id": 0,
+        "spriteIndex": 0,
+        "name": "biscuit",
+        "speed": "10",
+        "damage": 1
+    },
+    "water":{
+        "id": 1,
+        "spriteIndex": 0,
+        "name": "water",
+        "speed": "10",
+        "damage": 0
+    },
+    "fast":{
+        "id": 2,
+        "spriteIndex": 0,
+        "name": "50 Calibre Biscuit",
+        "speed": "20",
+        "damage": 3
+    }
+}
