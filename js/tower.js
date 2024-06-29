@@ -9,18 +9,19 @@ export function makeTower(pen, x, y, type){
     let tower = pen.makeBoxCollider(x, y, 20, 20)
     tower.typeId = type.id
     tower.asset = pen.assets.towers[type.id]
-    tower.attackRange = pen.makeBoxCollider(x,y, type.range, type.range)
+    tower.attackRange = pen.makeBoxCollider(x,y, type.range*2, type.range*2)
+    tower.attackRange.fill = "#00000080"
     tower.state = "SEARCHING"
     tower.value = type.cost
     tower.sellCost = type.cost * 0.7
     tower.range = type.range
-    tower.spd = type.spd
-    tower.reloadTimer = null
+    tower.spd = type.attackSpeed
+    tower.reloadTimer = type.attackSpeed
     tower.targetEnemy = null
     tower.ownShotsGroup = pen.makeGroup()
     tower.shotType = pen.getShotType(type.bulletType)
     tower.switchState = function(newState){
-        console.log("Switching state to: " + newState)
+        console.log(`Tower ${this.id} switching to state: ` + newState)
         this.state = newState
     }
 
@@ -35,7 +36,8 @@ export function makeTower(pen, x, y, type){
 
     tower.shoot = function(){
         this.rotateTo(this.targetEnemy.x, this.targetEnemy.y)
-        let bullet = pen.makeShot(pen, this.x, this.y, this.direction, this.shotType.speed, this.shotType.damage)
+        let bullet = pen.makeShot(pen, this.x, this.y, this.direction, this.shotType, type.shotLife)
+        pen.allowPausing(bullet)
         pen.allShotGroup.push(bullet)
         this.ownShotsGroup.push(bullet)
     }
@@ -92,13 +94,15 @@ export function makeTower(pen, x, y, type){
     return tower
 }
 
-export function makeShot(pen, x, y, direction, spd, dmg){
+export function makeShot(pen, x, y, direction, type, lifetime){ 
     let bullet = pen.makeBoxCollider(x, y, 16, 16)
-    bullet.speed = spd
+    console.log(type)
+    bullet.speed = type.speed
     bullet.friction = 0
     bullet.direction = direction
     bullet.rotation = direction
-    bullet.dmg = dmg
+    bullet.dmg = type.damage
+    bullet.lifetime = lifetime
 
     return bullet
 }

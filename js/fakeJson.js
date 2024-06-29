@@ -95,6 +95,7 @@ export const bullets = {
         "spriteIndex": 0,
         "name": "biscuit",
         "speed": 50,
+        "life": 300,
         "damage": 1
     },
     "water":{
@@ -102,13 +103,15 @@ export const bullets = {
         "spriteIndex": 0,
         "name": "water",
         "speed": 10,
+        "life": 100,
         "damage": 0
     },
     "fast":{
         "id": 2,
         "spriteIndex": 0,
         "name": "50 Calibre Biscuit",
-        "speed": 20,
+        "speed": 700,
+        "life": 200,
         "damage": 3
     }
 }
@@ -119,8 +122,9 @@ export const towers = {
         "id": 0,
         "info": "Ol' reliable, feeds cats till they tire from eating",
         "cost": 200,
-        "attackSpeed": 500,
+        "attackSpeed": 400,
         "bulletType": 0,
+        "shotLife": 300,
         "range": 100,
         "towerBuffs": []
     },
@@ -131,6 +135,7 @@ export const towers = {
         "cost": 550,
         "attackSpeed": 600,
         "bulletType": 0,
+        "shotLife": 300,
         "range": 150,
         "towerBuffs": ["doubleshot"]
     },
@@ -141,6 +146,7 @@ export const towers = {
         "cost": 800,
         "attackSpeed": 700,
         "bulletType": 1,
+        "shotLife": 300,
         "range": 90,
         "towerBuffs": []
     },
@@ -151,6 +157,7 @@ export const towers = {
         "cost": 1000,
         "attackSpeed": 1200,
         "bulletType": 2,
+        "shotLife": 300,
         "range": 500,
         "towerBuffs": []
     },
@@ -161,6 +168,7 @@ export const towers = {
         "cost": 5000,
         "attackSpeed": 100,
         "bulletType": 0,
+        "shotLife": 700,
         "range": 200,
         "towerBuffs": []
     }

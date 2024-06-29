@@ -15,6 +15,7 @@ export function makeShop(pen){
     shop.towerButtons = []
     shop.state = "CLOSED"
     shop.selected = null
+    shop.selectedInfo = null
     shop.canPlace = true
 
     let i = 0
@@ -23,10 +24,10 @@ export function makeShop(pen){
     for(let tower in pen.data.tower){
         let type = pen.data.tower[tower]
         let newTower = pen.makeTower(pen, x, y, type)
-        console.log(tower)
+        newTower.info = type.info
+        newTower.name = type.name
         shop.towerGroup.push(newTower)
         let towerButton = pen.makeUiButton(pen, x, y, 32,32, "")
-        console.log(towerButton)
         shop.towerButtons.push(towerButton)
         if(i%2 == 0){
             x += 50
@@ -37,7 +38,7 @@ export function makeShop(pen){
         }
         i++
     }
-    console.log(shop.towerButtons)
+
 
     shop.drawTowerButtons = function(){
         for(let i=0; i<this.towerGroup.length;i++){
@@ -45,23 +46,43 @@ export function makeShop(pen){
             this.towerGroup[i].draw()
 
             if(this.towerButtons[i].isHovered()){
-                let tower = pen.getTowerType(this.towerGroup[i].typeId)
-                pen.shape.rectangle(this.info.x, this.info.y, this.info.w, this.info.h)
-                pen.colour.fill = "#1e1e1e"
-                pen.text.print(pen.wP(50), this.info.y + 30, `${tower.name}: ${tower.info}`)
-                pen.text.print(pen.wP(40), this.info.y + 50, `Costs: $${tower.cost}`)
-                if(tower.cost < pen.game.money){
-                    pen.colour.fill = "#04AF70"
-                    if(this.towerButtons[i].up){
-                        this.selected = pen.makeTower(pen, pen.mouse.x, pen.mouse.y, tower)
-                        this.state = "PURCHASING"
-                    }
-                } else {
-                    pen.colour.fill = "#FF0000"
-                }
-                pen.text.print(pen.wP(60), this.info.y + 50, `You have: $${pen.game.money}`)
+                this.drawInfoWindow(this.towerGroup[i], this.towerButtons[i])
+                // pen.shape.rectangle(this.info.x, this.info.y, this.info.w, this.info.h)
+                // pen.colour.fill = "#1e1e1e"
+                // pen.text.print(pen.wP(50), this.info.y + 30, `${this.towerGroup[i].name}: ${this.towerGroup[i].info}`)
+                // pen.text.print(pen.wP(40), this.info.y + 50, `Costs: $${this.towerGroup[i].value}`)
+                // if(this.towerGroup[i].value < pen.game.money){
+                //     pen.colour.fill = "#04AF70"
+                //     if(this.towerButtons[i].up){
+                //         let tower = pen.getTowerType(this.towerGroup[i].typeId)
+                //         this.selected = pen.makeTower(pen, pen.mouse.x, pen.mouse.y, tower)
+                //         this.state = "PURCHASING"
+                //     }
+                // } else {
+                //     pen.colour.fill = "#FF0000"
+                // }
+                // pen.text.print(pen.wP(60), this.info.y + 50, `You have: $${pen.game.money}`)
             }
         }
+    }
+
+    shop.drawInfoWindow = function(unit, btn) {
+        pen.colour.fill = "#ffffffb3"
+        pen.shape.rectangle(this.info.x, this.info.y, this.info.w, this.info.h)
+        pen.colour.fill = "#1e1e1e"
+        pen.text.print(pen.wP(50), this.info.y + 30, `${unit.name}: ${unit.info}`)
+        pen.text.print(pen.wP(40), this.info.y + 50, `Costs: $${unit.value}`)
+        if(unit.value < pen.game.money){
+            pen.colour.fill = "#04AF70"
+            if(btn.up){
+                let tower = pen.getTowerType(unit.typeId)
+                this.selected = pen.makeTower(pen, pen.mouse.x, pen.mouse.y, tower)
+                this.state = "PURCHASING"
+            }
+        } else {
+            pen.colour.fill = "#FF0000"
+        }
+        pen.text.print(pen.wP(60), this.info.y + 50, `You have: $${pen.game.money}`)
     }
 
     shop.drawWindow = function(){
@@ -94,18 +115,23 @@ export function makeShop(pen){
     }
 
     shop.purchaseState = function(){
-
-        
-        if(!this.selected || this.cancelButton.up){
+        if(!this.selected.exists || this.cancelButton.up){
             this.selected = null
             this.state = "OPEN"
         } else if(!this.cancelButton.isHovered()){
             this.canPlace = (this.selected.overlaps(pen.pathGroup) || this.selected.overlaps(pen.towerGroup)) ? false : true
-            pen.colour.fill = this.canPlace ? "#00000080" : "#ff646480"
-            pen.shape.oval(pen.mouse.x, pen.mouse.y, this.selected.range)
+            this.selected.attackRange.fill = this.canPlace ? "#00000080" : "#ff646480"
             this.selected.x = pen.mouse.x
             this.selected.y = pen.mouse.y
+            this.selected.attackRange.x = pen.mouse.x
+            this.selected.attackRange.y = pen.mouse.y
+            this.selected.attackRange.draw()
             this.selected.draw()
+            if(pen.mouse.leftUp && this.canPlace){
+                pen.game.spawnTower(pen.mouse.x, pen.mouse.y, this.selected.typeId)
+                pen.game.money -= this.selected.value
+                this.selected.remove()
+            }
         }
         this.cancelButton.draw()
 

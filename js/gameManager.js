@@ -15,7 +15,7 @@ export class GameManager{
     }
     waveActive = false
     health = 100
-    money = 300
+    money = 99999
     waveIndex = 0
     enemyIndex = 0
     spawnTimer = 500
@@ -39,21 +39,88 @@ export class GameManager{
         this.enemyGroup = pen.enemyGroup
         this.waves = pen.data.waves
         this.dmgCollider = pen.makeBoxCollider(20,50,32,32)
-        this.waveButton = pen.makeUiButton(pen, pen.wP(75), pen.hP(5), 80, 50, "Start Wave")
-        this.shopButton = pen.makeUiButton(pen, pen.wP(90), pen.hP(5), 100, 75)
+        this.mouse = pen.makeBoxCollider(pen.mouse.x, pen.mouse.y, 1, 1)
+        this.waveButton = pen.makeUiButton(pen, pen.wP(75), pen.hP(5), 90, 30, "Start Wave")
+        this.info = {x: 0, y: this.pen.hP(90), w: this.pen.w, h: this.pen.hP(10)}
+        this.closeInfoButton = pen.makeUiButton(pen, pen.wP(90), pen.hP(95), 30, 30, "Close")
+        this.sellButton = pen.makeUiButton(pen, pen.wP(60), this.info.y+50, 40,20, "Sell")
+        this.pauseButton = pen.makeUiButton(pen, pen.wP(95), pen.hP(5), 40, 40, "Pause")
+        this.unpauseButton = pen.makeUiButton(pen, pen.wP(50), pen.hP(50), 100, 50, "Resume Game")
+        this.selected = null
+        this.selectedInfo = null
+        
         this.createMap()
+    }
+
+    updateMouse(){
+        this.mouse.x = this.pen.mouse.x
+        this.mouse.y = this.pen.mouse.y
+    }
+
+    handleButton(button, fn){
+        button.draw()
+        if(button.up){
+            fn()
+        }
+    }
+
+    drawSelectedInfo(){
+        if(this.selected && this.selected.exists){
+            if(this.pen.shop.state == "OPEN"){
+                this.selected = null
+            } else {
+                this.selected.attackRange.draw()
+                this.selected.draw()
+                this.pen.shape.alignment.x = "left"
+                this.pen.shape.alignment.y = "top"
+                this.pen.colour.fill = "#ffffffb3"
+                this.pen.shape.rectangle(this.info.x, this.info.y, this.info.w, this.info.h)
+                this.pen.colour.fill = "#1e1e1e"
+                this.pen.text.print(this.pen.wP(50), this.info.y + 30, `${this.selectedInfo.name}: ${this.selectedInfo.info}`)
+                this.pen.text.print(this.pen.wP(40), this.info.y + 50, `Sell for: $${this.selected.sellCost}`)
+                
+                this.handleButton(this.closeInfoButton, () => {this.selected = null})
+                this.handleButton(this.sellButton, () => {
+                    this.money += this.selected.sellCost
+                    this.selected.remove()
+                })
+            }
+        } else {this.selected = null}
+    }
+
+    towerMouseInteract(){
+        for(let tower of this.towerGroup){
+            if(this.mouse.overlaps(tower)){
+                this.pen.colour.fill = "#ffffffb3"
+                this.pen.shape.oval(tower.x, tower.y, 22, 22)
+                if(this.pen.mouse.leftUp){
+                    this.selected = tower
+                    this.selectedInfo = this.pen.getTowerType(tower.typeId)
+                    this.pen.shop.state = "CLOSED"
+                }
+            }
+        }
+    }
+
+    cleanupShots(){
+        for(let shot of this.allShotGroup){
+            shot.lifetime -= this.pen.time.msElapsed
+            if(shot.lifetime <= 0){
+                shot.remove()
+
+            } else if (shot.lifetime <= 100){
+                shot.speed -= 5
+            }
+        }
     }
 
     runState(){
         this.pathGroup.draw()
         this.enemyGroup.draw()
-        for(let tower of this.towerGroup){
-
-        }
+        this.towerMouseInteract()
         this.towerGroup.draw()
         this.allShotGroup.draw()
         this.drawUi()
-        this.pauseGame()
         switch (this.state) {
             case "IDLE":
                 this.idleState()
@@ -103,49 +170,58 @@ export class GameManager{
     }
 
     drawUi(){
-        this.pen.text.print(this.pen.wP(20), this.pen.hP(5), `HP: ${this.health}  $$$: ${this.money}`)
         this.waveButton.draw()
+        this.drawSelectedInfo()
     }
 
     idleState(){
+        this.updateMouse()
+        //Draw UI
         this.pen.shop.draw()
+        this.waveButton.draw()
+        this.cleanupShots()
+        this.pen.colour.fill = "#ffffff"
+        this.pen.text.print(this.pen.wP(20), this.pen.hP(5), `HP: ${this.health}  $$$: ${this.money}`)
+        this.pen.text.print(this.pen.wP(40), this.pen.hP(5), `Next wave: ${this.waveIndex + 1}`)
+        this.handleButton(this.pauseButton, () => this.pauseGame())
+
         if(this.pen.keys.down(" ") || this.waveButton.up){
             this.state = "NORMAL"
         }
-        this.pen.text.print(this.pen.wP(40), this.pen.hP(5), "Press SPACE to spawn a wave")
     }
 
  
 
     pauseGame(){
-        if(this.pen.keys.up("p") && !this.paused){
-            console.log("Pause pressed")
-            for (let unit of this.pausableGroup){
-                unit.pauseUnit()
-            }
-            this.oldState = this.state
-            this.state = "PAUSED"
-        } 
-        this.paused = false
+        for (let unit of this.pausableGroup){
+            unit.pauseUnit()
+        }
+        this.oldState = this.state
+        this.state = "PAUSED"
+    }
+
+    unpauseGame(){
+        for (let unit of this.pausableGroup){
+            unit.unpauseUnit()
+        }
+        this.state = this.oldState
     }
 
     pauseState(){
-        if(this.pen.keys.up("p") && this.paused){
-            console.log("unpause pressed")
-            for (let unit of this.pausableGroup){
-                unit.unpauseUnit()
-            }
-            this.state = this.oldState
-        }
-        if(!this.paused){
-            this.paused = true
-        }
-        this.pen.text.print(this.pen.w/4, this.pen.h/5, "GAME IS PAUSED, PRESS 'P' TO RESUME")
+        this.pen.shop.openButton.draw()
+        this.pen.colour.fill = "#00000080"
+        this.pen.shape.alignment.x = "left"
+        this.pen.shape.alignment.y = "top"
+        this.pen.shape.rectangle(0,0,this.pen.w,this.pen.h)
+        this.handleButton(this.unpauseButton, ()=> {this.unpauseGame()})
     }
 
     
     waveState(fast = false){
+        this.updateMouse()
         this.pen.shop.draw()
+        this.cleanupShots()
+        this.handleButton(this.pauseButton, () => this.pauseGame())
         // if(!this.trigger){
         //     this.spawnEnemy(this.pen.w-48, this.pen.h, 0)
         //     this.trigger = true
@@ -163,6 +239,9 @@ export class GameManager{
                 this.state = "GAMEOVER"
             } else {this.state = "IDLE"}
         } 
+
+        this.pen.colour.fill = "#ffffff"
+        this.pen.text.print(this.pen.wP(20), this.pen.hP(5), `HP: ${this.health}  $$$: ${this.money}`)
     }
 
     updateUnits(){
@@ -209,8 +288,8 @@ export class GameManager{
         this.enemyGroup.push(enemy)
     }
 
-    spawnTower(x,y,type){
-        let towerType = this.pen.getTowerType(type)
+    spawnTower(x,y,typeId){
+        let towerType = this.pen.getTowerType(typeId)
         console.log(towerType)
         let tower = this.pen.makeTower(this.pen, x, y, towerType)
         console.log(tower)
