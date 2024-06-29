@@ -13,7 +13,7 @@ function Node() {
     this.cost;
 }
 
-function Pathfinding() {
+export function Pathfinding() {
 	
 	 //stores all the nodes
     this.nodes = [];

@@ -18,22 +18,42 @@ export class GameManager{
     money = 300
     waveIndex = 0
     enemyIndex = 0
-    spawnTimer = 0
+    spawnTimer = 500
     spawnAt = 500
     state
     pen
     pathGroup
-    constructor(pen, waves, enemyTypes, enemyConstructor){
+    trigger = false
+    goal
+    paused = false
+    constructor(pen){
         this.pen = pen
+        this.speedMultiplier = 1
         this.state = this.states.IDLE
-        this.pathGroup = this.pen.makeGroup()
-        this.waves = waves
-        this.enemyData = enemyTypes
-        this.makeEnemy = enemyConstructor
-        this.enemyGroup = this.pen.makeGroup()
+        this.oldState = this.state
+        this.pathGroup = pen.pathGroup
+        this.towerGroup = pen.towerGroup
+        this.towerGroup.name = "Live Towers"
+        this.allShotGroup = pen.allShotGroup
+        this.pausableGroup = pen.pausableGroup
+        this.enemyGroup = pen.enemyGroup
+        this.waves = pen.data.waves
+        this.dmgCollider = pen.makeBoxCollider(20,50,32,32)
+        this.waveButton = pen.makeUiButton(pen, pen.wP(75), pen.hP(5), 80, 50, "Start Wave")
+        this.shopButton = pen.makeUiButton(pen, pen.wP(90), pen.hP(5), 100, 75)
+        this.createMap()
     }
 
     runState(){
+        this.pathGroup.draw()
+        this.enemyGroup.draw()
+        for(let tower of this.towerGroup){
+
+        }
+        this.towerGroup.draw()
+        this.allShotGroup.draw()
+        this.drawUi()
+        this.pauseGame()
         switch (this.state) {
             case "IDLE":
                 this.idleState()
@@ -53,12 +73,20 @@ export class GameManager{
         }
     }
 
-    createMap(mapData,tiles){
+    calculateValue(enemy){
+        return enemy.value += Math.floor(this.pen.math.random(0,enemy.value/3))
+    }
+
+    createMap(){
+        let {map, path} = this.pen.data
+        let tiles = this.pen.assets.tiles
+
+        this.pen.pathfinding.loadGrid(path, 16,16, this.pen.w, this.pen.h, false)
         let i = 0;
         let x = 16;
         let y = 16;
-        for(let i=0; i<mapData.length; i++){
-            let line = mapData[i]
+        for(let i=0; i<map.length; i++){
+            let line = map[i]
             for(let j=0; j<line.length; j++){
                 let tileIndex = parseInt(line[j])
                 if(tileIndex != 0){
@@ -71,27 +99,63 @@ export class GameManager{
             x = 16
             y += 32
         }
+        this.goal = this.pen.makeBoxCollider(20,50, 32, 32)
+    }
+
+    drawUi(){
+        this.pen.text.print(this.pen.wP(20), this.pen.hP(5), `HP: ${this.health}  $$$: ${this.money}`)
+        this.waveButton.draw()
     }
 
     idleState(){
-        if($.keys.down("space")){
+        this.pen.shop.draw()
+        if(this.pen.keys.down(" ") || this.waveButton.up){
             this.state = "NORMAL"
         }
-        this.pen.text.print(this.pen.w/4, this.pen.h/5, "Press SPACE to spawn a wave")
+        this.pen.text.print(this.pen.wP(40), this.pen.hP(5), "Press SPACE to spawn a wave")
     }
+
+ 
+
+    pauseGame(){
+        if(this.pen.keys.up("p") && !this.paused){
+            console.log("Pause pressed")
+            for (let unit of this.pausableGroup){
+                unit.pauseUnit()
+            }
+            this.oldState = this.state
+            this.state = "PAUSED"
+        } 
+        this.paused = false
+    }
+
+    pauseState(){
+        if(this.pen.keys.up("p") && this.paused){
+            console.log("unpause pressed")
+            for (let unit of this.pausableGroup){
+                unit.unpauseUnit()
+            }
+            this.state = this.oldState
+        }
+        if(!this.paused){
+            this.paused = true
+        }
+        this.pen.text.print(this.pen.w/4, this.pen.h/5, "GAME IS PAUSED, PRESS 'P' TO RESUME")
+    }
+
     
     waveState(fast = false){
+        this.pen.shop.draw()
+        // if(!this.trigger){
+        //     this.spawnEnemy(this.pen.w-48, this.pen.h, 0)
+        //     this.trigger = true
+        // }
         let spawnSpd = fast ? 250 : 500
+        // console.log(this.enemyData)
         //Creates Enemies and iteratres through wave
-        if(this.currentEnemy < this.waves[this.waveIndex].length){
-            if(this.spawnTimer >= spawnSpd){
-                let waveEnemy = this.waves[this.waveIndex][this.enemyIndex]
-                let enemyType = fnd(this.enemyData, (enemy) => {return enemy.id == waveEnemy})
-                let enemy = this.pen.makeEnemy(this.pen, this.pen.w-48, this.pen.h-16, 32, 32, enemyType.hp, enemyType.spd, enemyType.dmg, enemyType.scale, enemyType.value)
-                this.enemyGroup.push(enemy)
-                this.enemyIndex += 1
-                this.spawnTimer = 0
-            } else {this.spawnTime += $.time.msElapsed}
+        this.updateUnits()
+        if(this.enemyIndex < this.waves[this.waveIndex].length){
+            this.waveSpawner(spawnSpd)
         } else if(this.enemyGroup.length < 1){
             this.waveIndex += 1
             this.enemyIndex = 0
@@ -101,20 +165,61 @@ export class GameManager{
         } 
     }
 
-    pauseState(){
-
+    updateUnits(){
+        if(this.enemyGroup.length > 0){
+            for(let enemy of this.enemyGroup){
+                enemy.fsm()
+                if(enemy.overlaps(this.goal)){
+                    this.health -= enemy.dmg
+                    enemy.remove()
+                }
+                for(let shot of this.pen.allShotGroup){
+                    if(shot.overlaps(enemy)){
+                        enemy.hp -= shot.dmg
+                        shot.remove()
+                    }
+                }
+                if(enemy.hp <=0){
+                    this.money += this.calculateValue(enemy)
+                    enemy.remove()
+                }
+            }
+        
+            if(this.towerGroup.length > 0){
+                for(let tower of this.towerGroup){
+                    tower.fsm()
+                }
+            }
+        }
     }
+
+    waveSpawner(spd){
+        if(this.spawnTimer >= spd){
+            let waveEnemy = this.waves[this.waveIndex][this.enemyIndex]
+            this.spawnEnemy(this.pen.w-48, this.pen.h-16, waveEnemy)
+            this.enemyIndex += 1
+            this.spawnTimer = 0
+        } else {this.spawnTimer += this.pen.time.msElapsed}
+    }
+
+    spawnEnemy(x,y,type){
+        let enemyType = this.pen.getEnemyType(type)
+        let enemy = this.pen.makeEnemy(this.pen, x,y, 32, 32, enemyType.hp, enemyType.spd, enemyType.dmg, enemyType.scale, enemyType.value, this.pen.assets.enemies[enemyType.spriteIndex])
+        this.pen.allowPausing(enemy)
+        this.enemyGroup.push(enemy)
+    }
+
+    spawnTower(x,y,type){
+        let towerType = this.pen.getTowerType(type)
+        console.log(towerType)
+        let tower = this.pen.makeTower(this.pen, x, y, towerType)
+        console.log(tower)
+        this.pen.allowPausing(tower)
+        this.towerGroup.push(tower)
+    }
+
 
     gameoverState(){
 
     }
-
-    spawnWave(fast = false){
-
-    }
-
-    findEnemy(id){
-        this.enemyData.find()
-    }
-
 }
