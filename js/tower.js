@@ -6,7 +6,7 @@ Reloading: Awaits reload timer
 */
 
 export function makeTower(pen, x, y, type){
-    let tower = pen.makeBoxCollider(x, y, 20, 20)
+    let tower = pen.makePausableEntity(pen, x, y, 20, 20)
     tower.typeId = type.id
     tower.asset = pen.assets.towers[type.id]
     tower.attackRange = pen.makeBoxCollider(x,y, type.range*2, type.range*2)
@@ -16,10 +16,18 @@ export function makeTower(pen, x, y, type){
     tower.sellCost = type.cost * 0.7
     tower.range = type.range
     tower.spd = type.attackSpeed
+    tower.maxSpeed = type.attackSpeed
     tower.reloadTimer = type.attackSpeed
     tower.targetEnemy = null
     tower.ownShotsGroup = pen.makeGroup()
     tower.shotType = pen.getShotType(type.bulletType)
+
+    tower.switchSpeed = function(fast){
+        this.spd = fast ? this.maxSpeed * 0.5 : this.maxSpeed
+    }
+    tower.pauseUnit = () =>{}
+    tower.unpauseUnit = () =>{}
+
     tower.switchState = function(newState){
         console.log(`Tower ${this.id} switching to state: ` + newState)
         this.state = newState
@@ -37,7 +45,6 @@ export function makeTower(pen, x, y, type){
     tower.shoot = function(){
         this.rotateTo(this.targetEnemy.x, this.targetEnemy.y)
         let bullet = pen.makeShot(pen, this.x, this.y, this.direction, this.shotType, type.shotLife)
-        pen.allowPausing(bullet)
         pen.allShotGroup.push(bullet)
         this.ownShotsGroup.push(bullet)
     }
@@ -95,9 +102,7 @@ export function makeTower(pen, x, y, type){
 }
 
 export function makeShot(pen, x, y, direction, type, lifetime){ 
-    let bullet = pen.makeBoxCollider(x, y, 16, 16)
-    console.log(type)
-    bullet.speed = type.speed
+    let bullet = pen.makePausableEntity(pen, x, y, 16, 16, type.speed)
     bullet.friction = 0
     bullet.direction = direction
     bullet.rotation = direction

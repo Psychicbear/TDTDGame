@@ -28,7 +28,7 @@ export class GameManager{
     paused = false
     constructor(pen){
         this.pen = pen
-        this.speedMultiplier = 1
+        this.fast = false
         this.state = this.states.IDLE
         this.oldState = this.state
         this.pathGroup = pen.pathGroup
@@ -41,6 +41,8 @@ export class GameManager{
         this.dmgCollider = pen.makeBoxCollider(20,50,32,32)
         this.mouse = pen.makeBoxCollider(pen.mouse.x, pen.mouse.y, 1, 1)
         this.waveButton = pen.makeUiButton(pen, pen.wP(75), pen.hP(5), 90, 30, "Start Wave")
+        this.waveSpeedButton = pen.makeUiButton(pen, pen.wP(75), pen.hP(5), 90, 30, "Normal Speed")
+        this.skipButton = pen.makeUiButton(pen, pen.wP(60), pen.hP(5), 90, 30, "Skip Wave")
         this.info = {x: 0, y: this.pen.hP(90), w: this.pen.w, h: this.pen.hP(10)}
         this.closeInfoButton = pen.makeUiButton(pen, pen.wP(90), pen.hP(95), 30, 30, "Close")
         this.sellButton = pen.makeUiButton(pen, pen.wP(60), this.info.y+50, 40,20, "Sell")
@@ -128,9 +130,6 @@ export class GameManager{
             case "NORMAL":
                 this.waveState()
                 break;
-            case "FAST":
-                this.waveState(true)
-                break;
             case "PAUSED":
                 this.pauseState()
                 break;
@@ -170,7 +169,6 @@ export class GameManager{
     }
 
     drawUi(){
-        this.waveButton.draw()
         this.drawSelectedInfo()
     }
 
@@ -202,7 +200,7 @@ export class GameManager{
 
     unpauseGame(){
         for (let unit of this.pausableGroup){
-            unit.unpauseUnit()
+            unit.unpauseUnit(this.fast)
         }
         this.state = this.oldState
     }
@@ -216,17 +214,32 @@ export class GameManager{
         this.handleButton(this.unpauseButton, ()=> {this.unpauseGame()})
     }
 
+    switchSpeed(){
+        this.fast = !this.fast
+        for (let unit of this.pausableGroup){
+            unit.switchSpeed(this.fast)
+        }
+        this.waveSpeedButton.label = this.fast ? "Fast Speed" : "Normal Speed"
+    }
+
+    skipWave(){
+        for(let enemy of this.enemyGroup){
+            enemy.position = this.goal
+        }
+    }
+
     
-    waveState(fast = false){
+    waveState(){
         this.updateMouse()
         this.pen.shop.draw()
         this.cleanupShots()
         this.handleButton(this.pauseButton, () => this.pauseGame())
+        this.handleButton(this.waveSpeedButton, () => this.switchSpeed())
         // if(!this.trigger){
         //     this.spawnEnemy(this.pen.w-48, this.pen.h, 0)
         //     this.trigger = true
         // }
-        let spawnSpd = fast ? 250 : 500
+        let spawnSpd = this.fast ? 250 : 500
         // console.log(this.enemyData)
         //Creates Enemies and iteratres through wave
         this.updateUnits()
@@ -238,7 +251,9 @@ export class GameManager{
             if(this.waveIndex == this.waves.length){
                 this.state = "GAMEOVER"
             } else {this.state = "IDLE"}
-        } 
+        } else {
+            this.handleButton(this.skipButton, () => this.skipWave())
+        }
 
         this.pen.colour.fill = "#ffffff"
         this.pen.text.print(this.pen.wP(20), this.pen.hP(5), `HP: ${this.health}  $$$: ${this.money}`)
@@ -284,16 +299,13 @@ export class GameManager{
     spawnEnemy(x,y,type){
         let enemyType = this.pen.getEnemyType(type)
         let enemy = this.pen.makeEnemy(this.pen, x,y, 32, 32, enemyType.hp, enemyType.spd, enemyType.dmg, enemyType.scale, enemyType.value, this.pen.assets.enemies[enemyType.spriteIndex])
-        this.pen.allowPausing(enemy)
+        enemy.switchSpeed(this.fast)
         this.enemyGroup.push(enemy)
     }
 
     spawnTower(x,y,typeId){
         let towerType = this.pen.getTowerType(typeId)
-        console.log(towerType)
         let tower = this.pen.makeTower(this.pen, x, y, towerType)
-        console.log(tower)
-        this.pen.allowPausing(tower)
         this.towerGroup.push(tower)
     }
 

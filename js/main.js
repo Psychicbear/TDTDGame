@@ -6,6 +6,7 @@ import { Pathfinding } from "./pathfinding.js";
 import { makeShot, makeTower } from "./tower.js";
 import { makeUiButton } from "./button.js";
 import { makeShop } from "./shop.js";
+import { makePausableEntity } from "./pausableEntity.js";
 const states = {
     LOADING: 0,
     MENU: 1,
@@ -124,6 +125,8 @@ function setup(){
     $.towerGroup.name = "Live Towers"
     $.pathGroup.name = "Path Tiles"
 
+    $.makePausableEntity = makePausableEntity
+
     //Gets enemy data by ID
     $.getEnemyType = function(id){
         let enemies = this.data.enemy
@@ -170,7 +173,6 @@ function setup(){
             this.state = this.oldState
             this.speed = this.maxSpeed
         }
-    
         this.pausableGroup.push(unit)
     }
 

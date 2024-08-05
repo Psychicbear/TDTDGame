@@ -1,5 +1,5 @@
 export function makeEnemy(pen, x, y, w, h, hp, spd, dmg, scale, val, asset){
-    let enemy = pen.makeBoxCollider(x,y,w,h)
+    let enemy = pen.makePausableEntity(pen, x,y,w,h, spd)
     enemy.asset = asset
     enemy.hp = hp
     enemy.friction = 0
@@ -19,7 +19,7 @@ export function makeEnemy(pen, x, y, w, h, hp, spd, dmg, scale, val, asset){
     enemy.pathIndex = 0
     enemy.path = pen.pathfinding.findPath(enemy.nextPoint.x, enemy.nextPoint.y, 20,50)
     enemy.movingState = function() {
-        if(Math.abs(this.x - this.nextPoint.x) + Math.abs(this.y - this.nextPoint.y) < 5){
+        if(Math.abs(this.x - this.nextPoint.x) + Math.abs(this.y - this.nextPoint.y) < (this.speed * 0.4)){
             this.x = this.nextPoint.x
             this.y = this.nextPoint.y
             this.state = "FINDINGNODE"
@@ -37,6 +37,8 @@ export function makeEnemy(pen, x, y, w, h, hp, spd, dmg, scale, val, asset){
     }
 
     enemy.fsm = function() {
+        console.log(this.state)
+        console.log(this.nextPoint)
         if(this.exists){
             switch (this.state) {
                 case "MOVING":
