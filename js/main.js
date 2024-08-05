@@ -64,26 +64,26 @@ function preload(){
     }
     $.assets = {
         tiles: [
-            $.loadImage(0,0, "../images/tiles0.png"),
-            $.loadImage(0,0, "../images/tiles1.png"),
-            $.loadImage(0,0, "../images/tiles2.png"),
-            $.loadImage(0,0, "../images/tiles3.png"),
-            $.loadImage(0,0, "../images/tiles4.png"),
-            $.loadImage(0,0, "../images/tiles5.png"),
-            $.loadImage(0,0, "../images/tiles6.png"),
-            $.loadImage(0,0, "../images/tiles7.png"),
+            $.loadImageToStamp(0,0, "../images/tiles0.png"),
+            $.loadImageToStamp(0,0, "../images/tiles1.png"),
+            $.loadImageToStamp(0,0, "../images/tiles2.png"),
+            $.loadImageToStamp(0,0, "../images/tiles3.png"),
+            $.loadImageToStamp(0,0, "../images/tiles4.png"),
+            $.loadImageToStamp(0,0, "../images/tiles5.png"),
+            $.loadImageToStamp(0,0, "../images/tiles6.png"),
+            $.loadImageToStamp(0,0, "../images/tiles7.png"),
         ],
         enemies: [
-            $.loadImage(0,0, "../images/white0001.png"),
-            $.loadImage(0,0, "../images/brown0001.png"),
-            $.loadImage(0,0, "../images/black0001.png"),
+            $.loadImageToStamp(0,0, "../images/white0001.png"),
+            $.loadImageToStamp(0,0, "../images/brown0001.png"),
+            $.loadImageToStamp(0,0, "../images/black0001.png"),
         ],
         towers: [
-            $.loadImage(0,0, "../images/tower0001.png"),
-            $.loadImage(0,0, "../images/tower0002.png"),
-            $.loadImage(0,0, "../images/tower0003.png"),
-            $.loadImage(0,0, "../images/tower0004.png"),
-            $.loadImage(0,0, "../images/tower0005.png"),
+            $.loadImageToStamp(0,0, "../images/tower0001.png"),
+            $.loadImageToStamp(0,0, "../images/tower0002.png"),
+            $.loadImageToStamp(0,0, "../images/tower0003.png"),
+            $.loadImageToStamp(0,0, "../images/tower0004.png"),
+            $.loadImageToStamp(0,0, "../images/tower0005.png"),
         ]
     }
 }
