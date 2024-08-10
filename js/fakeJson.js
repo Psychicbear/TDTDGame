@@ -4,7 +4,7 @@ export const enemies = {
         "spriteIndex": 0,
         "name": "whiteBasic",
         "scale": 1.75,
-        "spd": 50,
+        "spd": 10,
         "hp": 2,
         "value": 15,
         "dmg": 1,

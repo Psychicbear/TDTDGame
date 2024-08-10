@@ -37,8 +37,6 @@ export function makeEnemy(pen, x, y, w, h, hp, spd, dmg, scale, val, asset){
     }
 
     enemy.fsm = function() {
-        console.log(this.state)
-        console.log(this.nextPoint)
         if(this.exists){
             switch (this.state) {
                 case "MOVING":

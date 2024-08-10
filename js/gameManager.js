@@ -235,10 +235,6 @@ export class GameManager{
         this.cleanupShots()
         this.handleButton(this.pauseButton, () => this.pauseGame())
         this.handleButton(this.waveSpeedButton, () => this.switchSpeed())
-        // if(!this.trigger){
-        //     this.spawnEnemy(this.pen.w-48, this.pen.h, 0)
-        //     this.trigger = true
-        // }
         let spawnSpd = this.fast ? 250 : 500
         // console.log(this.enemyData)
         //Creates Enemies and iteratres through wave

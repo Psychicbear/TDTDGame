@@ -47,21 +47,6 @@ export function makeShop(pen){
 
             if(this.towerButtons[i].isHovered()){
                 this.drawInfoWindow(this.towerGroup[i], this.towerButtons[i])
-                // pen.shape.rectangle(this.info.x, this.info.y, this.info.w, this.info.h)
-                // pen.colour.fill = "#1e1e1e"
-                // pen.text.print(pen.wP(50), this.info.y + 30, `${this.towerGroup[i].name}: ${this.towerGroup[i].info}`)
-                // pen.text.print(pen.wP(40), this.info.y + 50, `Costs: $${this.towerGroup[i].value}`)
-                // if(this.towerGroup[i].value < pen.game.money){
-                //     pen.colour.fill = "#04AF70"
-                //     if(this.towerButtons[i].up){
-                //         let tower = pen.getTowerType(this.towerGroup[i].typeId)
-                //         this.selected = pen.makeTower(pen, pen.mouse.x, pen.mouse.y, tower)
-                //         this.state = "PURCHASING"
-                //     }
-                // } else {
-                //     pen.colour.fill = "#FF0000"
-                // }
-                // pen.text.print(pen.wP(60), this.info.y + 50, `You have: $${pen.game.money}`)
             }
         }
     }

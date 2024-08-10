@@ -11,25 +11,32 @@ export function makeTower(pen, x, y, type){
     tower.asset = pen.assets.towers[type.id]
     tower.attackRange = pen.makeBoxCollider(x,y, type.range*2, type.range*2)
     tower.attackRange.fill = "#00000080"
+    tower.projectiles = 1
+    tower.spd = CalculatedTrait(type.attackSpeed, 0, function(spd){
+        let newVal = spd.base - (spd.base * spd.multiplier)
+        console.log(spd.base, newVal)
+        return newVal
+    })
+    tower.shootSpd = tower.spd.calculated
+    console.log(tower.shootSpd)
     tower.state = "SEARCHING"
     tower.value = type.cost
     tower.sellCost = type.cost * 0.7
     tower.range = type.range
-    tower.spd = type.attackSpeed
-    tower.maxSpeed = type.attackSpeed
     tower.reloadTimer = type.attackSpeed
     tower.targetEnemy = null
     tower.ownShotsGroup = pen.makeGroup()
     tower.shotType = pen.getShotType(type.bulletType)
 
     tower.switchSpeed = function(fast){
-        this.spd = fast ? this.maxSpeed * 0.5 : this.maxSpeed
+        this.shootSpd = fast ? this.spd.calculated * 0.5 : this.spd.calculated
+
     }
     tower.pauseUnit = () =>{}
     tower.unpauseUnit = () =>{}
 
     tower.switchState = function(newState){
-        console.log(`Tower ${this.id} switching to state: ` + newState)
+        // console.log(`Tower ${this.id} switching to state: ` + newState)
         this.state = newState
     }
 
@@ -74,7 +81,7 @@ export function makeTower(pen, x, y, type){
         }
     }
     tower.reloadState = function() {
-        if(this.reloadTimer <= this.spd){
+        if(this.reloadTimer <= this.shootSpd){
             this.reloadTimer += pen.time.msElapsed
         } else {
             this.switchState("SHOOTING")
@@ -111,3 +118,13 @@ export function makeShot(pen, x, y, direction, type, lifetime){
 
     return bullet
 }
+
+const CalculatedTrait = (val, multiplier, fn) => ({
+    base: val,
+    multiplier: multiplier,
+    calculated: val,
+    modify(change){
+        this.multiplier += change
+        this.calculated = fn(this)
+    }
+})
