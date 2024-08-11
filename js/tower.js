@@ -12,6 +12,7 @@ export function makeTower(pen, x, y, type){
     tower.attackRange = pen.makeBoxCollider(x,y, type.range*2, type.range*2)
     tower.attackRange.fill = "#00000080"
     tower.projectiles = 1
+    tower.pierce = 2
     tower.spd = CalculatedTrait(type.attackSpeed, 0, function(spd){
         let newVal = spd.base - (spd.base * spd.multiplier)
         console.log(spd.base, newVal)
@@ -51,7 +52,7 @@ export function makeTower(pen, x, y, type){
 
     tower.shoot = function(){
         this.rotateTo(this.targetEnemy.x, this.targetEnemy.y)
-        let bullet = pen.makeShot(pen, this.x, this.y, this.direction, this.shotType, type.shotLife)
+        let bullet = pen.makeShot(pen, this.x, this.y, this.direction, this.shotType, type.shotLife, this.pierce)
         pen.allShotGroup.push(bullet)
         this.ownShotsGroup.push(bullet)
     }
@@ -108,13 +109,15 @@ export function makeTower(pen, x, y, type){
     return tower
 }
 
-export function makeShot(pen, x, y, direction, type, lifetime){ 
+export function makeShot(pen, x, y, direction, type, lifetime, hp = 1){ 
     let bullet = pen.makePausableEntity(pen, x, y, 16, 16, type.speed)
     bullet.friction = 0
     bullet.direction = direction
     bullet.rotation = direction
     bullet.dmg = type.damage
+    bullet.hp = hp
     bullet.lifetime = lifetime
+    bullet.enemiesHit = []
 
     return bullet
 }

@@ -50,6 +50,7 @@ export class GameManager{
         this.unpauseButton = pen.makeUiButton(pen, pen.wP(50), pen.hP(50), 100, 50, "Resume Game")
         this.selected = null
         this.selectedInfo = null
+        this.testflag = false
         
         this.createMap()
     }
@@ -107,9 +108,10 @@ export class GameManager{
     cleanupShots(){
         for(let shot of this.allShotGroup){
             shot.lifetime -= this.pen.time.msElapsed
-            if(shot.lifetime <= 0){
+            console.log(shot.hp, shot.lifetime)
+            if(shot.lifetime <= 0 || shot.hp <= 0){
                 shot.remove()
-
+    
             } else if (shot.lifetime <= 100){
                 shot.speed -= 5
             }
@@ -148,7 +150,6 @@ export class GameManager{
         let tiles = this.pen.assets.tiles
 
         this.pen.pathfinding.loadGrid(path, 16,16, this.pen.w, this.pen.h, false)
-        let i = 0;
         let x = 16;
         let y = 16;
         for(let i=0; i<map.length; i++){
@@ -232,10 +233,9 @@ export class GameManager{
     waveState(){
         this.updateMouse()
         this.pen.shop.draw()
-        this.cleanupShots()
         this.handleButton(this.pauseButton, () => this.pauseGame())
         this.handleButton(this.waveSpeedButton, () => this.switchSpeed())
-        let spawnSpd = this.fast ? 250 : 500
+        let spawnSpd = this.fast ? 125 : 250
         // console.log(this.enemyData)
         //Creates Enemies and iteratres through wave
         this.updateUnits()
@@ -256,29 +256,35 @@ export class GameManager{
     }
 
     updateUnits(){
-        if(this.enemyGroup.length > 0){
-            for(let enemy of this.enemyGroup){
-                enemy.fsm()
-                if(enemy.overlaps(this.goal)){
-                    this.health -= enemy.dmg
-                    enemy.remove()
-                }
-                for(let shot of this.pen.allShotGroup){
-                    if(shot.overlaps(enemy)){
+        this.cleanupShots()
+        for(let enemy of this.enemyGroup){
+            enemy.fsm()
+            if(enemy.overlaps(this.goal)){
+                this.health -= enemy.dmg
+                enemy.remove()
+            }
+            for(let shot of this.pen.allShotGroup){
+                if(shot.overlaps(enemy) && shot.hp > 0){
+                    let alreadyHit = false
+                    for(let i of shot.enemiesHit){
+                        if(i === enemy) alreadyHit = true
+                    }
+                    if(!alreadyHit){
                         enemy.hp -= shot.dmg
-                        shot.remove()
+                        shot.hp--
+                        shot.enemiesHit.push(enemy)
                     }
                 }
-                if(enemy.hp <=0){
-                    this.money += this.calculateValue(enemy)
-                    enemy.remove()
-                }
             }
-        
-            if(this.towerGroup.length > 0){
-                for(let tower of this.towerGroup){
-                    tower.fsm()
-                }
+            if(enemy.hp <=0){
+                this.money += this.calculateValue(enemy)
+                enemy.remove()
+            }
+        }
+    
+        if(this.towerGroup.length > 0){
+            for(let tower of this.towerGroup){
+                tower.fsm()
             }
         }
     }
@@ -308,5 +314,12 @@ export class GameManager{
 
     gameoverState(){
 
+    }
+
+    testOnce(){
+        if(!this.testflag){
+            console.log()
+            this.testflag = true
+        }
     }
 }
