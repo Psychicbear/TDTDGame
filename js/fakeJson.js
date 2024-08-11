@@ -102,9 +102,10 @@ export const bullets = {
         "id": 1,
         "spriteIndex": 0,
         "name": "water",
-        "speed": 10,
+        "speed": 40,
         "life": 100,
-        "damage": 0
+        "damage": 0,
+        "scary": true
     },
     "fast":{
         "id": 2,

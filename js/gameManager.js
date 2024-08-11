@@ -28,6 +28,8 @@ export class GameManager{
     paused = false
     constructor(pen){
         this.pen = pen
+        this.startPoint = {x: pen.w-12, y: pen.h-128}
+        this.endPoint = {x: 20, y: 82}
         this.fast = false
         this.state = this.states.IDLE
         this.oldState = this.state
@@ -96,7 +98,7 @@ export class GameManager{
             if(this.mouse.overlaps(tower)){
                 this.pen.colour.fill = "#ffffffb3"
                 this.pen.shape.oval(tower.x, tower.y, 22, 22)
-                if(this.pen.mouse.leftUp){
+                if(this.pen.mouse.leftReleased){
                     this.selected = tower
                     this.selectedInfo = this.pen.getTowerType(tower.typeId)
                     this.pen.shop.state = "CLOSED"
@@ -150,6 +152,8 @@ export class GameManager{
         let tiles = this.pen.assets.tiles
 
         this.pen.pathfinding.loadGrid(path, 16,16, this.pen.w, this.pen.h, false)
+        this.pen.path = this.pen.pathfinding.findPath(this.startPoint.x, this.startPoint.y, this.endPoint.x, this.endPoint.y)
+        console.log(this.pen.path)
         let x = 16;
         let y = 16;
         for(let i=0; i<map.length; i++){
@@ -166,7 +170,7 @@ export class GameManager{
             x = 16
             y += 32
         }
-        this.goal = this.pen.makeBoxCollider(20,50, 32, 32)
+        this.goal = this.pen.makeBoxCollider(-20,116, 32, 32)
     }
 
     drawUi(){
@@ -255,10 +259,18 @@ export class GameManager{
         this.pen.text.print(this.pen.wP(20), this.pen.hP(5), `HP: ${this.health}  $$$: ${this.money}`)
     }
 
+    chanceRoll(percent){
+        let roll = Math.floor(this.pen.math.random(0,100))
+        if(roll <= percent){
+            return true
+        } else return false
+    }
+
     updateUnits(){
         this.cleanupShots()
         for(let enemy of this.enemyGroup){
             enemy.fsm()
+            //Deals damage to player when enemy reaches end of path
             if(enemy.overlaps(this.goal)){
                 this.health -= enemy.dmg
                 enemy.remove()
@@ -266,16 +278,27 @@ export class GameManager{
             for(let shot of this.pen.allShotGroup){
                 if(shot.overlaps(enemy) && shot.hp > 0){
                     let alreadyHit = false
+                    //Checks if bullet has pierced enemy already, preventing additional damage
                     for(let i of shot.enemiesHit){
                         if(i === enemy) alreadyHit = true
                     }
+
+                    //Damages enemy and applies status effects
                     if(!alreadyHit){
                         enemy.hp -= shot.dmg
                         shot.hp--
                         shot.enemiesHit.push(enemy)
+
+                        //Water tower effect, pushes enemy back 4-5 path nodes quickly if it succeeds
+                        if(shot.scary && this.chanceRoll(50)){
+                            enemy.retreat = 5
+                            enemy.modifySpeed(speed => speed * 3)
+                            enemy.state = "RETREAT"
+                        }
                     }
                 }
             }
+            //Cleans up dead enemies, rewarding player with money
             if(enemy.hp <=0){
                 this.money += this.calculateValue(enemy)
                 enemy.remove()
@@ -292,7 +315,7 @@ export class GameManager{
     waveSpawner(spd){
         if(this.spawnTimer >= spd){
             let waveEnemy = this.waves[this.waveIndex][this.enemyIndex]
-            this.spawnEnemy(this.pen.w-48, this.pen.h-16, waveEnemy)
+            this.spawnEnemy(this.pen.w, this.pen.h-128, waveEnemy)
             this.enemyIndex += 1
             this.spawnTimer = 0
         } else {this.spawnTimer += this.pen.time.msElapsed}
@@ -300,7 +323,7 @@ export class GameManager{
 
     spawnEnemy(x,y,type){
         let enemyType = this.pen.getEnemyType(type)
-        let enemy = this.pen.makeEnemy(this.pen, x,y, 32, 32, enemyType.hp, enemyType.spd, enemyType.dmg, enemyType.scale, enemyType.value, this.pen.assets.enemies[enemyType.spriteIndex])
+        let enemy = this.pen.makeEnemy(this.pen, x,y, 32, 32, this.goal, enemyType.hp, enemyType.spd, enemyType.dmg, enemyType.scale, enemyType.value, this.pen.assets.enemies[enemyType.spriteIndex])
         enemy.switchSpeed(this.fast)
         this.enemyGroup.push(enemy)
     }

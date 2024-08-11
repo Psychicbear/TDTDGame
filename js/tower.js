@@ -118,6 +118,9 @@ export function makeShot(pen, x, y, direction, type, lifetime, hp = 1){
     bullet.hp = hp
     bullet.lifetime = lifetime
     bullet.enemiesHit = []
+    if(type.scary){
+        bullet.scary = true
+    }
 
     return bullet
 }

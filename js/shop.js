@@ -112,7 +112,7 @@ export function makeShop(pen){
             this.selected.attackRange.y = pen.mouse.y
             this.selected.attackRange.draw()
             this.selected.draw()
-            if(pen.mouse.leftUp && this.canPlace){
+            if(pen.mouse.leftReleased && this.canPlace){
                 pen.game.spawnTower(pen.mouse.x, pen.mouse.y, this.selected.typeId)
                 pen.game.money -= this.selected.value
                 this.selected.remove()

@@ -12,7 +12,6 @@ const states = {
     MENU: 1,
     GAME: 2
 }
-let gameManager
 $.use(update)
 preload()
 setup()
