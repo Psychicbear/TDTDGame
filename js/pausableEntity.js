@@ -1,5 +1,5 @@
-export function makePausableEntity(pen, x, y, w, h, spd=0){
-    let entity = pen.makeBoxCollider(x,y,w,h)
+export function makePausableEntity(pen, x, y, w, spd=0){
+    let entity = pen.makeCircleCollider(x,y,w)
     entity.fast = false
     entity.speed = spd
     entity.maxSpeed = spd

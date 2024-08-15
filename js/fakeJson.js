@@ -124,53 +124,545 @@ export const towers = {
         "info": "Ol' reliable, feeds cats till they tire from eating",
         "cost": 200,
         "attackSpeed": 400,
+        "firetype": "target",
         "bulletType": 0,
         "shotLife": 300,
         "range": 100,
-        "towerBuffs": []
+        "upgrades": [
+            [
+                {
+                    "id": 0,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by another 25%",
+                    "multiplier": 0.25,
+                    "price": 200
+                },
+                {
+                    "id": 2,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage",
+                    "multiplier": 1,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage again",
+                    "multiplier": 2,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Makes tower damage deadly",
+                    "multiplier": 3,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack even faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack very fast",
+                    "multiplier": 0.34,
+                    "price": 125
+                },
+            ],
+        ]
+    },
+    "circle": {
+        "name": "Round Feeder",
+        "id": 1,
+        "info": "Efficient! This tower feeds multiple cats around it",
+        "cost": 300,
+        "attackSpeed": 500,
+        "firetype": "around",
+        "bulletType": 0,
+        "projectiles": 8,
+        "shotLife": 300,
+        "range": 100,
+        "upgrades": [
+            [
+                {
+                    "id": 0,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by another 25%",
+                    "multiplier": 0.25,
+                    "price": 200
+                },
+                {
+                    "id": 2,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage",
+                    "multiplier": 1,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage again",
+                    "multiplier": 2,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Makes tower damage deadly",
+                    "multiplier": 3,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack even faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack very fast",
+                    "multiplier": 0.34,
+                    "price": 125
+                },
+            ],
+        ]
     },
     "double":{
         "name": "Double Feeder",
-        "id": 1,
+        "id": 2,
         "info": "With two barrels, this tower can feed two cats at once",
         "cost": 550,
         "attackSpeed": 600,
         "bulletType": 0,
+        "firetype": "target",
         "shotLife": 300,
         "range": 150,
-        "towerBuffs": ["doubleshot"]
+        "upgrades": [
+            [
+                {
+                    "id": 0,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by another 25%",
+                    "multiplier": 0.25,
+                    "price": 200
+                },
+                {
+                    "id": 2,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage",
+                    "multiplier": 1,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage again",
+                    "multiplier": 2,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Makes tower damage deadly",
+                    "multiplier": 3,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack even faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack very fast",
+                    "multiplier": 0.34,
+                    "price": 125
+                },
+            ],
+        ]
     },
     "spray": {
         "name": "Spray Bottle",
-        "id": 2,
+        "id": 3,
         "info": "A cat's biggest fear, this tower has a chance of scaring cats back the way they came",
         "cost": 800,
         "attackSpeed": 700,
         "bulletType": 1,
+        "firetype": "target",
         "shotLife": 300,
         "range": 90,
-        "towerBuffs": []
+        "upgrades": [
+            [
+                {
+                    "id": 0,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by another 25%",
+                    "multiplier": 0.25,
+                    "price": 200
+                },
+                {
+                    "id": 2,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage",
+                    "multiplier": 1,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage again",
+                    "multiplier": 2,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Makes tower damage deadly",
+                    "multiplier": 3,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack even faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack very fast",
+                    "multiplier": 0.34,
+                    "price": 125
+                },
+            ],
+        ]
     },
     "sniper": {
         "name": "Sniper Feeder",
-        "id": 3,
+        "id": 4,
         "info": "High range, high damage, low firerate",
         "cost": 1000,
         "attackSpeed": 1200,
         "bulletType": 2,
+        "firetype": "target",
         "shotLife": 300,
         "range": 500,
-        "towerBuffs": []
+        "upgrades": [
+            [
+                {
+                    "id": 0,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by another 25%",
+                    "multiplier": 0.25,
+                    "price": 200
+                },
+                {
+                    "id": 2,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage",
+                    "multiplier": 1,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage again",
+                    "multiplier": 2,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Makes tower damage deadly",
+                    "multiplier": 3,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack even faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack very fast",
+                    "multiplier": 0.34,
+                    "price": 125
+                },
+            ],
+        ]
     },
     "super": {
         "name": "Super Tower",
-        "id": 4,
+        "id": 5,
         "info": "Crazy fast firerate, the greatest yarn scientists worked together to manufacture this masterpiece",
         "cost": 5000,
         "attackSpeed": 100,
         "bulletType": 0,
+        "firetype": "target",
         "shotLife": 700,
         "range": 200,
-        "towerBuffs": []
+        "upgrades": [
+            [
+                {
+                    "id": 0,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by another 25%",
+                    "multiplier": 0.25,
+                    "price": 200
+                },
+                {
+                    "id": 2,
+                    "type": "range",
+                    "name": "Range Up",
+                    "desc": "Increases tower range by 25%",
+                    "multiplier": 0.25,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage",
+                    "multiplier": 1,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Doubles the tower's damage again",
+                    "multiplier": 2,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "damage",
+                    "name": "Damage Up",
+                    "desc": "Makes tower damage deadly",
+                    "multiplier": 3,
+                    "price": 125
+                },
+            ],
+            [
+                {
+                    "id": 0,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 1,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack even faster",
+                    "multiplier": 0.33,
+                    "price": 125
+                },
+                {
+                    "id": 2,
+                    "type": "attackspeed",
+                    "name": "Speed Up",
+                    "desc": "Makes tower attack very fast",
+                    "multiplier": 0.34,
+                    "price": 125
+                },
+            ],
+        ]
     }
 }

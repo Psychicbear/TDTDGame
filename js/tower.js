@@ -6,18 +6,24 @@ Reloading: Awaits reload timer
 */
 
 export function makeTower(pen, x, y, type){
-    let tower = pen.makePausableEntity(pen, x, y, 20, 20)
+    let tower = pen.makePausableEntity(pen, x, y, 20)
     tower.typeId = type.id
     tower.asset = pen.assets.towers[type.id]
-    tower.attackRange = pen.makeBoxCollider(x,y, type.range*2, type.range*2)
+    tower.attackRange = pen.makeCircleCollider(x,y, type.range*2)
     tower.attackRange.fill = "#00000080"
-    tower.projectiles = 1
+    tower.projectiles = type.projectiles ? type.projectiles : 1
     tower.pierce = 2
     tower.spd = CalculatedTrait(type.attackSpeed, 0, function(spd){
         let newVal = spd.base - (spd.base * spd.multiplier)
         console.log(spd.base, newVal)
         return newVal
     })
+    tower.availableUpgrades = [[],[],[]]
+    for(let i=0; i<= 2; i++){
+        for(let upgrade of type.upgrades[i]){
+            tower.availableUpgrades[i].push(upgrade.id)
+        }
+    }
     tower.shootSpd = tower.spd.calculated
     console.log(tower.shootSpd)
     tower.state = "SEARCHING"
@@ -50,12 +56,27 @@ export function makeTower(pen, x, y, type){
         this.rotation = angle
     }
 
-    tower.shoot = function(){
-        this.rotateTo(this.targetEnemy.x, this.targetEnemy.y)
-        let bullet = pen.makeShot(pen, this.x, this.y, this.direction, this.shotType, type.shotLife, this.pierce)
-        pen.allShotGroup.push(bullet)
-        this.ownShotsGroup.push(bullet)
+    if(type.firetype === "target"){
+        tower.shoot = function(){
+            this.rotateTo(this.targetEnemy.x, this.targetEnemy.y)
+            let bullet = pen.makeShot(pen, this.x, this.y, this.direction, this.shotType, type.shotLife, this.pierce)
+            pen.allShotGroup.push(bullet)
+            this.ownShotsGroup.push(bullet)
+        }
+    } else if(type.firetype === "around"){
+        tower.shoot = function(){
+            let spacing = Math.floor(360 / this.projectiles)
+            let angle = 0
+            for(let i=0; i<=this.projectiles; i++){
+                let bullet = pen.makeShot(pen, this.x, this.y, angle, this.shotType, type.shotLife, this.pierce)
+                pen.allShotGroup.push(bullet)
+                this.ownShotsGroup.push(bullet)
+                angle += spacing
+            }
+        }
     }
+
+
 
     tower.searchState = function() {
         for (let enemy of pen.enemyGroup){
@@ -110,7 +131,7 @@ export function makeTower(pen, x, y, type){
 }
 
 export function makeShot(pen, x, y, direction, type, lifetime, hp = 1){ 
-    let bullet = pen.makePausableEntity(pen, x, y, 16, 16, type.speed)
+    let bullet = pen.makePausableEntity(pen, x, y, 8, type.speed)
     bullet.friction = 0
     bullet.direction = direction
     bullet.rotation = direction

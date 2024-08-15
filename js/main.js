@@ -80,10 +80,14 @@ function preload(){
         ],
         towers: [
             $.loadImageToStamp(0,0, "../images/tower0001.png"),
+            $.loadImageToStamp(0,0, "../images/enemy_E.png"),
             $.loadImageToStamp(0,0, "../images/tower0002.png"),
             $.loadImageToStamp(0,0, "../images/tower0003.png"),
             $.loadImageToStamp(0,0, "../images/tower0004.png"),
             $.loadImageToStamp(0,0, "../images/tower0005.png"),
+        ],
+        bg: [
+            $.loadImageToStamp(640,360, "../images/grass_background.jpg")
         ]
     }
 }

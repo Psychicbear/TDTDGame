@@ -1,6 +1,5 @@
-export function makeEnemy(pen, x, y, w, h, goal, hp, spd, dmg, scale, val, asset){
-    let enemy = pen.makePausableEntity(pen, x,y,w,h, spd)
-    console.log({x: goal.x, y: goal.y})
+export function makeEnemy(pen, x, y, w, goal, hp, spd, dmg, scale, val, asset){
+    let enemy = pen.makePausableEntity(pen, x, y, w, spd)
     enemy.asset = asset
     enemy.baseSpeed = spd
     enemy.calculatedSpeed = spd

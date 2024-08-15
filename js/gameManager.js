@@ -110,7 +110,6 @@ export class GameManager{
     cleanupShots(){
         for(let shot of this.allShotGroup){
             shot.lifetime -= this.pen.time.msElapsed
-            console.log(shot.hp, shot.lifetime)
             if(shot.lifetime <= 0 || shot.hp <= 0){
                 shot.remove()
     
@@ -121,6 +120,7 @@ export class GameManager{
     }
 
     runState(){
+        this.pen.assets.bg[0].draw()
         this.pathGroup.draw()
         this.enemyGroup.draw()
         this.towerMouseInteract()
@@ -323,7 +323,7 @@ export class GameManager{
 
     spawnEnemy(x,y,type){
         let enemyType = this.pen.getEnemyType(type)
-        let enemy = this.pen.makeEnemy(this.pen, x,y, 32, 32, this.goal, enemyType.hp, enemyType.spd, enemyType.dmg, enemyType.scale, enemyType.value, this.pen.assets.enemies[enemyType.spriteIndex])
+        let enemy = this.pen.makeEnemy(this.pen, x,y, 32, this.goal, enemyType.hp, enemyType.spd, enemyType.dmg, enemyType.scale, enemyType.value, this.pen.assets.enemies[enemyType.spriteIndex])
         enemy.switchSpeed(this.fast)
         this.enemyGroup.push(enemy)
     }
